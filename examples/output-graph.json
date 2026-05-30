@@ -1,0 +1,77 @@
+{
+  "v": 2,
+  "mode": "compact",
+  "desc": "Spring Boot task management REST API with JWT auth, PostgreSQL, role-based access, and soft deletes.",
+  "n": [
+    {
+      "id": "n1",
+      "t": "F",
+      "i": "h",
+      "s": "Spring Boot, Java 21, PostgreSQL, Maven, Spring Data JPA, Hibernate. Constructor injection throughout.",
+      "c": [
+        {
+          "id": "n1.1",
+          "t": "A",
+          "i": "m",
+          "conf": 0.81,
+          "s": "Assumed deploying on Linux — all paths and configs are Unix-style."
+        }
+      ]
+    },
+    {
+      "id": "n2",
+      "t": "D",
+      "i": "h",
+      "st": "active",
+      "s": "JWT auth over sessions. JwtAuthFilter extends OncePerRequestFilter, placed before UsernamePasswordAuthenticationFilter."
+    },
+    {
+      "id": "n3",
+      "t": "P",
+      "i": "h",
+      "st": "resolved",
+      "s": "403 on all endpoints post-login. Fix: added .requestMatchers('/auth/**').permitAll() before anyRequest().authenticated()."
+    },
+    {
+      "id": "n4",
+      "t": "P",
+      "i": "h",
+      "st": "resolved",
+      "s": "N+1 query on Task fetch with assignedUser. Fix: @EntityGraph(attributePaths = {\"assignedUser\"}) on repository method. Task has @ManyToOne to User."
+    },
+    {
+      "id": "n5",
+      "t": "X",
+      "i": "m",
+      "st": "deferred",
+      "s": "Refresh token support explicitly postponed. Core JWT flow works without it."
+    },
+    {
+      "id": "n6",
+      "t": "G",
+      "i": "h",
+      "st": "active",
+      "s": "Task CRUD with RBAC: ADMIN full access, USER sees own tasks only. Using @PreAuthorize annotations."
+    },
+    {
+      "id": "n7",
+      "t": "D",
+      "i": "h",
+      "st": "active",
+      "s": "Soft deletes via deletedAt timestamp. @Where(clause = \"deleted_at IS NULL\") on Task entity. Delete sets deletedAt = LocalDateTime.now(), no repository.delete()."
+    },
+    {
+      "id": "n8",
+      "t": "D",
+      "i": "m",
+      "st": "active",
+      "s": "Staying on PostgreSQL but keeping schema portable — no jsonb, no PG-specific native queries, no PG sequences. MySQL migration possible if client requires."
+    }
+  ],
+  "rel": [
+    { "from": "n3", "to": "n2", "type": "caused_by" },
+    { "from": "n4", "to": "n1", "type": "related_to" },
+    { "from": "n6", "to": "n2", "type": "depends_on" }
+  ],
+  "handoff": "Resuming Spring Boot task management API. Stack: Java 21, PostgreSQL, JPA, JWT auth (working). N+1 fixed with @EntityGraph. Active: Task CRUD with RBAC (@PreAuthorize), soft deletes (deletedAt). Refresh tokens deferred. Schema kept portable for possible MySQL migration."
+}

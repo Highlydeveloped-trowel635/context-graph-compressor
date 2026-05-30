@@ -1,0 +1,119 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/your-username/context-graph-compressor/schema/context-graph-schema.json",
+  "title": "Context Graph",
+  "description": "Portable compressed conversation state graph produced by context-graph-compressor v2.",
+  "type": "object",
+  "required": ["v", "mode", "desc", "n", "handoff"],
+  "properties": {
+    "v": {
+      "type": "integer",
+      "description": "Schema version. Current: 2.",
+      "enum": [1, 2]
+    },
+    "mode": {
+      "type": "string",
+      "description": "Compression mode used to generate this graph.",
+      "enum": ["compact", "readable"]
+    },
+    "desc": {
+      "type": "string",
+      "description": "One-sentence description of the conversation topic and current state."
+    },
+    "chunks": {
+      "type": "integer",
+      "description": "Number of chunks used during chunked compression. Present only when chunked compression was applied.",
+      "minimum": 2
+    },
+    "meta": {
+      "type": "object",
+      "description": "Reserved for future extensibility. Parsers should ignore unknown fields.",
+      "additionalProperties": true
+    },
+    "n": {
+      "type": "array",
+      "description": "Array of context nodes representing key topics, decisions, problems, goals, code, assumptions, and open threads.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/Node"
+      }
+    },
+    "rel": {
+      "type": "array",
+      "description": "Explicit relationships between nodes. Used for cross-cutting dependencies that parent-child nesting cannot express.",
+      "items": {
+        "$ref": "#/definitions/Relationship"
+      }
+    },
+    "handoff": {
+      "type": "string",
+      "description": "2-3 line plain-English summary of current state. Paste this into a new chat along with the full JSON to resume the session."
+    }
+  },
+  "definitions": {
+    "Node": {
+      "type": "object",
+      "required": ["id", "t", "i", "s"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique node identifier. Format: n1, n2, n1.1 (child), n1.1.1 (grandchild).",
+          "pattern": "^[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+)*$"
+        },
+        "t": {
+          "type": "string",
+          "description": "Node type. F=Fact, D=Decision, P=Problem, G=Goal, C=Code, A=Assumption, X=Context/open thread.",
+          "enum": ["F", "D", "P", "G", "C", "A", "X"]
+        },
+        "i": {
+          "type": "string",
+          "description": "Importance level. h=high (losing this breaks continuity), m=medium (useful context), l=low (dropped in compact mode).",
+          "enum": ["h", "m", "l"]
+        },
+        "st": {
+          "type": "string",
+          "description": "Status of this node. Omit if not applicable (e.g. for plain facts).",
+          "enum": ["active", "open", "resolved", "deferred", "blocked", "abandoned"]
+        },
+        "s": {
+          "type": "string",
+          "description": "Telegraphic summary. Max 1-2 sentences in compact mode. Code identifiers must be verbatim."
+        },
+        "conf": {
+          "type": "number",
+          "description": "Confidence score. Only present on inferred/assumption nodes. 0.9-1.0=explicit, 0.7-0.9=implied, <0.7=uncertain (node should not exist).",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "c": {
+          "type": "array",
+          "description": "Child nodes. Use for details that belong under this topic. For cross-cutting dependencies, use top-level rel array instead.",
+          "items": {
+            "$ref": "#/definitions/Node"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "Relationship": {
+      "type": "object",
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "ID of the source node."
+        },
+        "to": {
+          "type": "string",
+          "description": "ID of the target node."
+        },
+        "type": {
+          "type": "string",
+          "description": "Relationship type.",
+          "enum": ["depends_on", "caused_by", "resolves", "supersedes", "references", "related_to"]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
